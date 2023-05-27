@@ -11,4 +11,4 @@ options:
                         Start date for activities to plot in YYYY-MM-DD format
 ```
 
-![alt text](https://pasteboard.co/7fRRdWc20BCR.png)
+![example](https://gcdnb.pbrd.co/images/7fRRdWc20BCR.png?o=1)
