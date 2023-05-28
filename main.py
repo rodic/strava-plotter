@@ -29,12 +29,19 @@ parser.add_argument(
     help='Time to use for pace calculation'
 )
 
+parser.add_argument(
+    '-u', '--unit',
+    choices=('km', 'mi'), default='km',
+    type=str, required=False,
+    help='Unit system to use for printing and plotting'
+)
+
 args = parser.parse_args()
 
-activities = get_activities(args.start_date, args.type, args.time)
+activities = get_activities(args.start_date, args.type, args.time, args.unit)
 
 if len(activities):
     print_activities(activities)
-    plot_activities(activities)
+    plot_activities(activities, args.unit)
 else:
     print(f'No activities of type {args.type} found after {args.start_date}')

@@ -4,6 +4,7 @@ import sys
 from attr import dataclass
 import requests
 import urllib3
+from distance import Distance
 
 from utils import date_to_timestamp, from_iso_date
 
@@ -27,14 +28,14 @@ class Activity:
     type: str
     start_date: datetime.date
     time: int
-    distance: int
+    distance: Distance
     average_heartrate: int
 
     def __str__(self):
         return f'{self.name} ({self.type})'
 
     @staticmethod
-    def from_json(json_activities, of_type, time) -> list['Activity']:
+    def from_json(json_activities, of_type: str, time: str, unit_system: str) -> list['Activity']:
         activities = []
 
         for a in json_activities:
@@ -46,7 +47,7 @@ class Activity:
                     type=a['type'],
                     start_date=from_iso_date(a['start_date']),
                     time=a['moving_time'] if time == 'moving' else a['elapsed_time'],
-                    distance=a['distance'],
+                    distance=Distance(a['distance'], unit_system),
                     average_heartrate=a.get('average_heartrate')
                 ))
 
@@ -72,7 +73,7 @@ def get_access_token():
         print(f"Failed to get access token: {ex}", file=sys.stderr)
         sys.exit(1)
 
-def get_activities(start_date, of_type, time) -> list[Activity]:
+def get_activities(start_date: datetime.date, of_type: str, time: str, unit_system: str) -> list[Activity]:
     """
     Gets all activities from Strava after a given date.
     """
@@ -81,7 +82,7 @@ def get_activities(start_date, of_type, time) -> list[Activity]:
     param = {'per_page': 200, 'page': 1, 'after': date_to_timestamp(start_date)}
 
     try:
-        return Activity.from_json(requests.get(ACTIVITIES_ENDPOINT, headers=header, params=param).json(), of_type, time)
+        return Activity.from_json(requests.get(ACTIVITIES_ENDPOINT, headers=header, params=param).json(), of_type, time, unit_system)
     except requests.exceptions.RequestException as ex:
         print(f"Failed to get activities: {ex}", file=sys.stderr)
         sys.exit(1)        
