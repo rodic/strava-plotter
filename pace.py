@@ -1,5 +1,7 @@
 import math
 
+from constants import METERS_PER_KILOMETER, SECONDS_PER_MINUTE
+
 
 class Pace:
     """
@@ -10,9 +12,6 @@ class Pace:
         distance (float): in meters
     """
 
-    SECONDS_PER_MINUTE = 60
-    METERS_PER_KILOMETER = 1000
-
     def __init__(self, time, distance) -> None:
         self.time = time
         self.distance = distance
@@ -22,8 +21,8 @@ class Pace:
         """
         Creates a Pace object from minutes per kilometer.
         """
-        seconds_per_kilometer = minutes_per_kilometer * Pace.SECONDS_PER_MINUTE
-        return cls(seconds_per_kilometer, Pace.METERS_PER_KILOMETER)
+        seconds_per_kilometer = minutes_per_kilometer * SECONDS_PER_MINUTE
+        return cls(seconds_per_kilometer, METERS_PER_KILOMETER)
 
     def __add__(self, other) -> 'Pace':
         """
@@ -35,7 +34,7 @@ class Pace:
         """
         Returns the pace in minutes per kilometer as a float.
         """
-        return (self.time / Pace.SECONDS_PER_MINUTE) / (self.distance / Pace.METERS_PER_KILOMETER)
+        return (self.time / SECONDS_PER_MINUTE) / (self.distance / METERS_PER_KILOMETER)
 
     def __str__(self) -> str:
         """
@@ -44,5 +43,5 @@ class Pace:
         pace = float(self)
         frac, whole = math.modf(pace)
         minutes = int(whole)
-        seconds = f'{int(frac * Pace.SECONDS_PER_MINUTE):02}'
+        seconds = f'{int(frac * SECONDS_PER_MINUTE):02}'
         return f'{minutes}:{seconds}'

@@ -13,7 +13,7 @@ def print_activities(activities):
     num_of_activities = 0
 
     for activity in activities:
-        pace = Pace(activity['elapsed_time'], activity['distance'])
+        pace = Pace(activity['moving_time'], activity['distance'])
         hr = activity['average_heartrate']
         dist = activity['distance']
         date = from_iso_date(activity['start_date'])
@@ -23,6 +23,7 @@ def print_activities(activities):
         print(f'Avg HR: {hr} bpm')
         print(f'Pace: {pace} min/km')
         print(f'Distance: {(dist/1000):.3} km')
+        print(f'Time: {activity["moving_time"]}')
         print(f'Date: {date}')
         print(f'url: https://www.strava.com/activities/{activity["id"]}')
 

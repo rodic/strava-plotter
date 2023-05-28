@@ -1,7 +1,9 @@
 import numpy as np
+import pandas as pd
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
+from constants import METERS_PER_KILOMETER
 
 from pace import Pace
 from utils import date_to_days_since_epoch, from_iso_date
@@ -9,9 +11,41 @@ from utils import date_to_days_since_epoch, from_iso_date
 
 def plot_activities(activities):
 
-    paces = [float(Pace(a['elapsed_time'], a['distance'])) for a in activities]
-    dates = [date_to_days_since_epoch(from_iso_date(a['start_date'])) for a in activities]
+    paces = []
+    dates = []
+    dates_in_days_since_epoch = []
+    distances = []
 
+    for a in activities:
+        paces.append(float(Pace(a['moving_time'], a['distance'])))
+        dates_in_days_since_epoch.append(date_to_days_since_epoch(from_iso_date(a['start_date'])))
+        dates.append(from_iso_date(a['start_date']))
+        distances.append(a['distance'])
+
+    plot_pace(dates_in_days_since_epoch, paces)
+    plot_weekly_distance(dates, distances)
+
+    plt.show()
+
+def plot_weekly_distance(dates, distances):
+    df = pd.DataFrame(np.array([dates, distances]).T, columns=['date', 'distance'])
+
+    df['distance'] = df['distance'].astype(float) / METERS_PER_KILOMETER
+    df['date'] = pd.to_datetime(df['date'], format='%m/%d/%y')
+    df['date'] = df['date'].dt.isocalendar().year.astype(str) + '-' + df['date'].dt.isocalendar().week.astype(str)
+    grouped = df.groupby('date').sum()
+
+    fig, ax = plt.subplots()
+
+    ax.bar(grouped.index, grouped['distance'])
+
+    ax.set_title('Weekly distance')
+    ax.set_xlabel('Week')
+    ax.set_ylabel('Distance (km)')
+
+    fig.canvas.draw()
+
+def plot_pace(dates, paces):
     xs = np.linspace(min(dates),max(dates))
 
     a, b = np.polyfit(dates, paces, 1)
@@ -32,4 +66,3 @@ def plot_activities(activities):
 
     fig.canvas.draw()
 
-    plt.show()
