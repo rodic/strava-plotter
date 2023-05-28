@@ -17,10 +17,10 @@ def plot_activities(activities):
     distances = []
 
     for a in activities:
-        paces.append(float(Pace(a['moving_time'], a['distance'])))
-        dates_in_days_since_epoch.append(date_to_days_since_epoch(from_iso_date(a['start_date'])))
-        dates.append(from_iso_date(a['start_date']))
-        distances.append(a['distance'])
+        paces.append(float(Pace(a.time, a.distance)))
+        dates_in_days_since_epoch.append(date_to_days_since_epoch(a.start_date))
+        dates.append(a.start_date)
+        distances.append(a.distance)
 
     plot_pace(dates_in_days_since_epoch, paces)
     plot_weekly_distance(dates, distances)
@@ -32,12 +32,15 @@ def plot_weekly_distance(dates, distances):
 
     df['distance'] = df['distance'].astype(float) / METERS_PER_KILOMETER
     df['date'] = pd.to_datetime(df['date'], format='%m/%d/%y')
-    df['date'] = df['date'].dt.isocalendar().year.astype(str) + '-' + df['date'].dt.isocalendar().week.astype(str)
+    df['date'] = df['date'].dt.isocalendar().year.astype(str) + '-' + df['date'].dt.isocalendar().week.astype(int).apply(lambda n: f'{n:02d}')
     grouped = df.groupby('date').sum()
 
     fig, ax = plt.subplots()
 
+    print(grouped)
+
     ax.bar(grouped.index, grouped['distance'])
+    ax.tick_params(axis='x', labelrotation=30)
 
     ax.set_title('Weekly distance')
     ax.set_xlabel('Week')
@@ -46,7 +49,7 @@ def plot_weekly_distance(dates, distances):
     fig.canvas.draw()
 
 def plot_pace(dates, paces):
-    xs = np.linspace(min(dates),max(dates))
+    xs = np.linspace(min(dates), max(dates))
 
     a, b = np.polyfit(dates, paces, 1)
 

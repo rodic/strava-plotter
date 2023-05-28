@@ -1,9 +1,11 @@
+import datetime
 import os
 import sys
+from attr import dataclass
 import requests
 import urllib3
 
-from utils import date_to_timestamp
+from utils import date_to_timestamp, from_iso_date
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -14,6 +16,41 @@ ACTIVITIES_ENDPOINT = "https://www.strava.com/api/v3/athlete/activities"
 client_id = os.getenv('STRAVA_CLIENT_ID')
 client_secret = os.getenv('STRAVA_CLIENT_SECRET')
 refresh_token = os.getenv('STRAVA_REFRESH_TOKEN')
+
+@dataclass
+class Activity:
+    """
+    Data class for Strava activity.
+    """
+    id: int
+    name: str
+    type: str
+    start_date: datetime.date
+    time: int
+    distance: int
+    average_heartrate: int
+
+    def __str__(self):
+        return f'{self.name} ({self.type})'
+
+    @staticmethod
+    def from_json(json_activities, of_type, time) -> list['Activity']:
+        activities = []
+
+        for a in json_activities:
+            if a['type'].lower() == of_type:
+                print(a)
+                activities.append(Activity(
+                    id=a['id'],
+                    name=a['name'],
+                    type=a['type'],
+                    start_date=from_iso_date(a['start_date']),
+                    time=a['moving_time'] if time == 'moving' else a['elapsed_time'],
+                    distance=a['distance'],
+                    average_heartrate=a.get('average_heartrate')
+                ))
+
+        return activities
 
 
 def get_access_token():
@@ -35,7 +72,7 @@ def get_access_token():
         print(f"Failed to get access token: {ex}", file=sys.stderr)
         sys.exit(1)
 
-def get_activities(start_date):
+def get_activities(start_date, of_type, time) -> list[Activity]:
     """
     Gets all activities from Strava after a given date.
     """
@@ -44,7 +81,7 @@ def get_activities(start_date):
     param = {'per_page': 200, 'page': 1, 'after': date_to_timestamp(start_date)}
 
     try:
-        return requests.get(ACTIVITIES_ENDPOINT, headers=header, params=param).json()
+        return Activity.from_json(requests.get(ACTIVITIES_ENDPOINT, headers=header, params=param).json(), of_type, time)
     except requests.exceptions.RequestException as ex:
         print(f"Failed to get activities: {ex}", file=sys.stderr)
         sys.exit(1)        

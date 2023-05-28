@@ -1,3 +1,4 @@
+from constants import METERS_PER_KILOMETER
 from pace import Pace
 from utils import date_to_days_since_epoch, from_iso_date
 
@@ -13,29 +14,26 @@ def print_activities(activities):
     num_of_activities = 0
 
     for activity in activities:
-        pace = Pace(activity['moving_time'], activity['distance'])
-        hr = activity['average_heartrate']
-        dist = activity['distance']
-        date = from_iso_date(activity['start_date'])
+        pace = Pace(activity.time, activity.distance)
 
         print(ACTIVITY_BREAK)
         print(f'Activity: #{num_of_activities + 1}')
-        print(f'Avg HR: {hr} bpm')
+        print(f'Avg HR: {activity.average_heartrate} bpm')
         print(f'Pace: {pace} min/km')
-        print(f'Distance: {(dist/1000):.3} km')
-        print(f'Time: {activity["moving_time"]}')
-        print(f'Date: {date}')
-        print(f'url: https://www.strava.com/activities/{activity["id"]}')
+        print(f'Distance: {(activity.distance / METERS_PER_KILOMETER):.2f} km')
+        print(f'Date: {activity.start_date}')
+        print(f'url: https://www.strava.com/activities/{activity.id}')
 
         avg_pace += pace
-        total_hr += hr
-        total_dist += dist
+        if activity.average_heartrate:
+            total_hr += activity.average_heartrate
+        total_dist += activity.distance
         num_of_activities += 1
-        dates.append(date_to_days_since_epoch(date))
-        hrs.append(hr)
+        dates.append(date_to_days_since_epoch(activity.start_date))
+        hrs.append(activity.average_heartrate)
 
     print(TOTAL_BREAK)
     print(f'Avg pace: {avg_pace} min/km')
     print(f'Avg HR: {(total_hr / num_of_activities):.2f} bpm')
-    print(f'Avg distance: {(total_dist / 1000 / num_of_activities):.2f} km')
-    print(f'Total distance: {(total_dist / 1000):.2f} km')
+    print(f'Avg distance: {(total_dist / METERS_PER_KILOMETER / num_of_activities):.2f} km')
+    print(f'Total distance: {(total_dist / METERS_PER_KILOMETER):.2f} km')
