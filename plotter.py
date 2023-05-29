@@ -4,7 +4,7 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
-from constants import METERS_PER_KILOMETER
+from constants import Unit
 from distance import Distance
 
 from pace import Pace
@@ -12,7 +12,7 @@ from strava import Activity
 from utils import date_to_days_since_epoch, from_iso_date
 
 
-def plot_activities(activities: list[Activity], distance_unit: str) -> None:
+def plot_activities(activities: list[Activity], unit: Unit) -> None:
 
     paces: list[float] = []
     dates: datetime.date = []
@@ -25,12 +25,12 @@ def plot_activities(activities: list[Activity], distance_unit: str) -> None:
         dates.append(a.start_date)
         distances.append(a.distance.unit_value)
 
-    plot_pace(dates_in_days_since_epoch, paces, distance_unit)
-    plot_weekly_distance(dates, distances, distance_unit)
+    plot_pace(dates_in_days_since_epoch, paces, unit)
+    plot_weekly_distance(dates, distances, unit)
 
     plt.show()
 
-def plot_weekly_distance(dates: list[datetime.date], distances: list[float], distance_unit: str) -> None:
+def plot_weekly_distance(dates: list[datetime.date], distances: list[float], unit: Unit) -> None:
     """
     Plot weekly distance.
     """
@@ -47,11 +47,11 @@ def plot_weekly_distance(dates: list[datetime.date], distances: list[float], dis
 
     ax.set_title('Weekly distance')
     ax.set_xlabel('Week')
-    ax.set_ylabel(f'Distance ({distance_unit})')
+    ax.set_ylabel(f'Distance ({unit.value})')
 
     fig.canvas.draw()
 
-def plot_pace(dates: list[datetime.date], paces: list[float], distance_unit: str) -> None:
+def plot_pace(dates: list[datetime.date], paces: list[float], unit: Unit) -> None:
     """
     Plot pace over time.
     """
@@ -65,13 +65,13 @@ def plot_pace(dates: list[datetime.date], paces: list[float], distance_unit: str
 
     ticks_loc = ax.get_yticks().tolist()
     ax.yaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
-    labels = [Pace.from_float(float(item.get_text()), distance_unit) for item in ax.get_yticklabels()]
+    labels = [Pace.from_float(float(item.get_text()), unit) for item in ax.get_yticklabels()]
     ax.set_yticklabels(labels)
     ax.tick_params(axis='x', labelrotation=30)
 
     ax.set_title('Pace over time')
     ax.set_xlabel('Date')
-    ax.set_ylabel(f'Pace (min/{distance_unit})')
+    ax.set_ylabel(f'Pace (min/{unit.value})')
 
     fig.canvas.draw()
 

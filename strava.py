@@ -4,6 +4,7 @@ import sys
 from attr import dataclass
 import requests
 import urllib3
+from constants import Unit
 from distance import Distance
 
 from utils import date_to_timestamp, from_iso_date
@@ -35,7 +36,7 @@ class Activity:
         return f'{self.name} ({self.type})'
 
     @staticmethod
-    def from_json(json_activities, of_type: str, time: str, unit: str) -> list['Activity']:
+    def from_json(json_activities, of_type: str, time: str, unit: Unit) -> list['Activity']:
         activities = []
 
         for a in json_activities:

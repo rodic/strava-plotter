@@ -1,4 +1,4 @@
-from constants import METERS_PER_KILOMETER, METERS_PER_MILE
+from constants import METERS_PER_KILOMETER, METERS_PER_MILE, Unit
 
 
 class Distance:
@@ -7,7 +7,7 @@ class Distance:
     
     Attributes:
         distance (float): in meters
-        unit (str): 'km' or 'mi'"""
+        unit (Unit): 'KM' or 'MI'"""
     
     def __init__(self, distance=0, unit=None) -> None:
         self.distance = distance
@@ -18,16 +18,16 @@ class Distance:
         """
         Returns the distance in the unit specified by self.unit.
         """
-        if self.unit == 'km':
+        if self.unit == Unit.KM:
             return self.distance / METERS_PER_KILOMETER
-        elif self.unit == 'mi':
+        elif self.unit == Unit.MI:
             return self.distance / METERS_PER_MILE
         else:
             raise ValueError(f'Invalid unit: {self.unit}')
     
     @classmethod
     def get_one_in_unit(cls, unit) -> 'Distance':
-        return Distance(METERS_PER_KILOMETER if unit == 'km' else METERS_PER_MILE, unit)
+        return Distance(METERS_PER_KILOMETER if unit == Unit.KM else METERS_PER_MILE, unit)
         
     def __add__(self, other) -> 'Distance':
         """
@@ -51,4 +51,4 @@ class Distance:
         """
         Returns a string representation of the distance in the format 'x.xx km' or 'x.xx mi'.
         """
-        return f'{self.unit_value:.2f} {self.unit}'
+        return f'{self.unit_value:.2f} {self.unit.value}'

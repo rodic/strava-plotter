@@ -1,6 +1,6 @@
 import math
 
-from constants import METERS_PER_KILOMETER, METERS_PER_MILE, SECONDS_PER_MINUTE
+from constants import SECONDS_PER_MINUTE, Unit
 from distance import Distance
 
 
@@ -18,12 +18,12 @@ class Pace:
         self.distance = distance
 
     @classmethod
-    def from_float(cls, pace: float, distance_unit: str) -> 'Pace':
+    def from_float(cls, pace: float, unit: Unit) -> 'Pace':
         """
         Creates a Pace object from minutes per kilometer or mile.
         """
         seconds = pace * SECONDS_PER_MINUTE
-        return cls(seconds, Distance.get_one_in_unit(distance_unit))
+        return cls(seconds, Distance.get_one_in_unit(unit))
     
     def as_float(self):
         """
@@ -51,4 +51,4 @@ class Pace:
         frac, whole = math.modf(pace)
         minutes = int(whole)
         seconds = f'{int(frac * SECONDS_PER_MINUTE):02}'
-        return f'{minutes}:{seconds}/{self.distance.unit}'
+        return f'{minutes}:{seconds}/{self.distance.unit.value}'

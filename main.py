@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import datetime
+from constants import Unit
 from plotter import plot_activities
 from printer import print_activities
 import argparse
@@ -31,9 +32,9 @@ parser.add_argument(
 
 parser.add_argument(
     '-u', '--unit',
-    choices=('km', 'mi'), default='km',
-    type=str, required=False,
-    help='Unit to use for printing and plotting'
+    choices=(Unit.KM, Unit.MI), default=Unit.KM,
+    type=Unit, required=False,
+    help='Unit to use for printing and plotting',
 )
 
 args = parser.parse_args()
