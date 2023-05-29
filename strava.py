@@ -35,19 +35,18 @@ class Activity:
         return f'{self.name} ({self.type})'
 
     @staticmethod
-    def from_json(json_activities, of_type: str, time: str, unit_system: str) -> list['Activity']:
+    def from_json(json_activities, of_type: str, time: str, unit: str) -> list['Activity']:
         activities = []
 
         for a in json_activities:
             if a['type'].lower() == of_type:
-                print(a)
                 activities.append(Activity(
                     id=a['id'],
                     name=a['name'],
                     type=a['type'],
                     start_date=from_iso_date(a['start_date']),
                     time=a['moving_time'] if time == 'moving' else a['elapsed_time'],
-                    distance=Distance(a['distance'], unit_system),
+                    distance=Distance(a['distance'], unit),
                     average_heartrate=a.get('average_heartrate')
                 ))
 
@@ -73,7 +72,7 @@ def get_access_token():
         print(f"Failed to get access token: {ex}", file=sys.stderr)
         sys.exit(1)
 
-def get_activities(start_date: datetime.date, of_type: str, time: str, unit_system: str) -> list[Activity]:
+def get_activities(start_date: datetime.date, of_type: str, time: str, unit: str) -> list[Activity]:
     """
     Gets all activities from Strava after a given date.
     """
@@ -82,7 +81,7 @@ def get_activities(start_date: datetime.date, of_type: str, time: str, unit_syst
     param = {'per_page': 200, 'page': 1, 'after': date_to_timestamp(start_date)}
 
     try:
-        return Activity.from_json(requests.get(ACTIVITIES_ENDPOINT, headers=header, params=param).json(), of_type, time, unit_system)
+        return Activity.from_json(requests.get(ACTIVITIES_ENDPOINT, headers=header, params=param).json(), of_type, time, unit)
     except requests.exceptions.RequestException as ex:
         print(f"Failed to get activities: {ex}", file=sys.stderr)
         sys.exit(1)        

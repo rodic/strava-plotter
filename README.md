@@ -2,6 +2,13 @@
 
 Plotting strava activities
 
+Set the following env vars
+```
+STRAVA_CLIENT_ID
+STRAVA_CLIENT_SECRET
+STRAVA_REFRESH_TOKEN
+```
+
 ```
 usage: main.py [-h] [-t {run,ride}] -s START_DATE [-m {moving,elapsed}] [-u {km,mi}]
 
@@ -16,7 +23,8 @@ options:
   -m {moving,elapsed}, --time {moving,elapsed}
                         Time to use for pace calculation
   -u {km,mi}, --unit {km,mi}
-                        Unit system to use for printing and plotting
+                        Unit to use for printing and plotting
 ```
 
-![example](https://gcdnb.pbrd.co/images/7fRRdWc20BCR.png?o=1)
+![pace](https://gcdnb.pbrd.co/images/7fRRdWc20BCR.png?o=1)
+![weekly_distance](https://gcdnb.pbrd.co/images/Zpd050yIw41U.png?o=1)

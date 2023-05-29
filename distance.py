@@ -16,7 +16,7 @@ class Distance:
     @property
     def unit_value(self) -> float:
         """
-        Returns the distance in the unit specified by self.unit_system.
+        Returns the distance in the unit specified by self.unit.
         """
         if self.unit == 'km':
             return self.distance / METERS_PER_KILOMETER
