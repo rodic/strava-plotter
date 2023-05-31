@@ -51,7 +51,7 @@ def plot_weekly_distance(dates: list[datetime.date], distances: list[float], uni
 
     fig.canvas.draw()
 
-def plot_pace(dates: list[datetime.date], paces: list[float], unit: Unit) -> None:
+def plot_pace(dates: list[int], paces: list[float], unit: Unit) -> None:
     """
     Plot pace over time.
     """
