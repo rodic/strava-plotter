@@ -26,5 +26,5 @@ options:
                         Unit to use for printing and plotting
 ```
 
-![pace](https://gcdnb.pbrd.co/images/7fRRdWc20BCR.png?o=1)
-![weekly_distance](https://gcdnb.pbrd.co/images/Zpd050yIw41U.png?o=1)
+![pace](/assets/pace_over_time.png?raw=true "Pace Over Time")
+![weekly_distance](/assets/weekly_distance.png?raw=true "Weekly Distance")
