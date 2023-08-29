@@ -15,7 +15,7 @@ from utils import date_to_days_since_epoch, from_iso_date
 def plot_activities(activities: list[Activity], unit: Unit) -> None:
 
     paces: list[float] = []
-    dates: datetime.date = []
+    dates: list[datetime.date] = []
     dates_in_days_since_epoch: list[int] = []
     distances: list[float] = []
 
@@ -34,9 +34,19 @@ def plot_weekly_distance(dates: list[datetime.date], distances: list[float], uni
     """
     Plot weekly distance.
     """
-    df = pd.DataFrame(np.array([dates, distances]).T, columns=['date', 'distance'])
+    if not dates:
+        return
+
+    date_range = pd.date_range(dates[0], dates[-1])
+    data = {d.strftime('%m/%d/%y'):0 for d in date_range}
+
+    for date, dist in zip(dates, distances):
+        data[date.strftime('%m/%d/%y')] += dist
+
+    df = pd.DataFrame(data.items(), columns=['date', 'distance'])
 
     df['date'] = pd.to_datetime(df['date'], format='%m/%d/%y')
+
     df['date'] = df['date'].dt.isocalendar().year.astype(str) + '-' + df['date'].dt.isocalendar().week.astype(int).apply(lambda n: f'{n:02d}')
     grouped = df.groupby('date').sum()
 
@@ -74,4 +84,3 @@ def plot_pace(dates: list[int], paces: list[float], unit: Unit) -> None:
     ax.set_ylabel(f'Pace (min/{unit.value})')
 
     fig.canvas.draw()
-
